@@ -4,53 +4,44 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { SafeAreaView, StyleSheet, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, StyleSheet, FlatList, Text, TouchableOpacity, Image, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+// Mock Data
 const fairyTales = [
-    { id: '1', title: 'Cinderella' },
-    { id: '2', title: 'Snow White' },
-    { id: '3', title: 'Hansel and Gretel' },
+    { id: '1', title: 'Cinderella', imageUrl: 'https://picsum.photos/200/300?random=1' },
+    { id: '2', title: 'Snow White', imageUrl: 'https://picsum.photos/200/300?random=2' },
+    { id: '3', title: 'Hansel and Gretel', imageUrl: 'https://picsum.photos/200/300?random=3' },
 ];
 
+// HomeScreen Component
 const HomeScreen = () => {
     const navigation = useNavigation();
 
     const renderItem = ({ item }) => (
         <TouchableOpacity
-            style={stylesHomeScreen.item}
+            style={styles.item}
             onPress={() => navigation.navigate('Detail', { tale: item })}
         >
-            <Text style={stylesHomeScreen.title}>{item.title}</Text>
+            <Image source={{ uri: item.imageUrl }} style={styles.image} />
+            <Text style={styles.title}>{item.title}</Text>
         </TouchableOpacity>
     );
 
     return (
-        <SafeAreaView style={stylesHomeScreen.container}>
+        <SafeAreaView style={styles.container}>
             <FlatList
                 data={fairyTales}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
-                contentContainerStyle={stylesHomeScreen.list}
+                contentContainerStyle={styles.list}
             />
         </SafeAreaView>
     );
 };
 
-const DetailScreen = ({ route }) => {
-    const { tale } = route.params;
-
-    return (
-        <SafeAreaView style={stylesDetailScreen.container}>
-            <View style={stylesDetailScreen.box}>
-                <Text style={stylesDetailScreen.title}>{tale.title}</Text>
-                <Text style={stylesDetailScreen.content}>Once upon a time, {tale.title}...</Text>
-            </View>
-        </SafeAreaView>
-    );
-};
-
-const stylesHomeScreen = StyleSheet.create({
+// HomeScreen Styles
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: 50,
@@ -61,11 +52,17 @@ const stylesHomeScreen = StyleSheet.create({
     },
     item: {
         backgroundColor: '#f9c2ff',
-        padding: 20,
+        padding: 10,
         marginVertical: 8,
         borderRadius: 10,
         alignItems: 'center',
         width: '100%',
+    },
+    image: {
+        width: 150,
+        height: 150,
+        borderRadius: 10,
+        marginBottom: 10,
     },
     title: {
         fontSize: 18,
@@ -73,7 +70,23 @@ const stylesHomeScreen = StyleSheet.create({
     },
 });
 
-const stylesDetailScreen = StyleSheet.create({
+// DetailScreen Component
+const DetailScreen = ({ route }) => {
+    const { tale } = route.params;
+
+    return (
+        <SafeAreaView style={detailStyles.container}>
+            <View style={detailStyles.box}>
+                <Image source={{ uri: tale.imageUrl }} style={detailStyles.image} />
+                <Text style={detailStyles.title}>{tale.title}</Text>
+                <Text style={detailStyles.content}>Once upon a time, {tale.title}...</Text>
+            </View>
+        </SafeAreaView>
+    );
+};
+
+// DetailScreen Styles
+const detailStyles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -91,6 +104,13 @@ const stylesDetailScreen = StyleSheet.create({
         shadowRadius: 2,
         elevation: 5,
         width: '90%',
+        alignItems: 'center',
+    },
+    image: {
+        width: '100%',
+        height: 300,
+        borderRadius: 10,
+        marginBottom: 10,
     },
     title: {
         fontSize: 24,
@@ -102,6 +122,7 @@ const stylesDetailScreen = StyleSheet.create({
     },
 });
 
+// App Component with Navigation
 const Stack = createStackNavigator();
 
 export default function App() {
